@@ -3,19 +3,26 @@
 import type VueRouter from '../index'
 import { stringifyQuery } from './query'
 
+// 清除末尾斜杠
 const trailingSlashRE = /\/?$/
 
+
+/*
+ * 创建路由函数
+ *
+ */
 export function createRoute (
-  record: ?RouteRecord,
-  location: Location,
-  redirectedFrom?: ?Location,
-  router?: VueRouter
-): Route {
-  const stringifyQuery = router && router.options.stringifyQuery
+  record: ?RouteRecord,  // 记录
+  location: Location,  // 位置
+  redirectedFrom?: ?Location,  //从哪里重定向
+  router?: VueRouter  // vue路由
+): Route
+{
+  const stringifyQuery = router && router.options.stringifyQuery  // 如果用户传入stringifyQuery，则覆盖默认操作
 
   let query: any = location.query || {}
   try {
-    query = clone(query)
+    query = clone(query)  // 把query深拷贝
   } catch (e) {}
 
   const route: Route = {
@@ -34,12 +41,21 @@ export function createRoute (
   return Object.freeze(route)
 }
 
+/*
+ * 克隆函数（深拷贝）
+ */
 function clone (value) {
+  // 如果是数组：
   if (Array.isArray(value)) {
+    // 用map直接复制，返回
     return value.map(clone)
-  } else if (value && typeof value === 'object') {
+  }
+  // 如果是对象：
+  else if (value && typeof value === 'object') {
+    // 把对象每个kv赋值给新对象
     const res = {}
     for (const key in value) {
+      // 递归复制
       res[key] = clone(value[key])
     }
     return res
@@ -62,11 +78,17 @@ function formatMatch (record: ?RouteRecord): Array<RouteRecord> {
   return res
 }
 
+/*
+ * 获取完整路径
+ */
 function getFullPath (
   { path, query = {}, hash = '' },
   _stringifyQuery
 ): string {
+  // 参数path一定是一个路由url，
+  // 如果传入stringifyQuery，则使用，把query的参数按照此函数转换为字符串
   const stringify = _stringifyQuery || stringifyQuery
+  // 返回
   return (path || '/') + stringify(query) + hash
 }
 

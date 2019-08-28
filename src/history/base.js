@@ -66,7 +66,8 @@ export class History {
     location: RawLocation,
     onComplete?: Function,
     onAbort?: Function
-  ) {
+  )
+  {
     const route = this.router.match(location, this.current)
     this.confirmTransition(
       route,
@@ -97,7 +98,8 @@ export class History {
     )
   }
 
-  confirmTransition (route: Route, onComplete: Function, onAbort?: Function) {
+  confirmTransition (route: Route, onComplete: Function, onAbort?: Function)
+  {
     const current = this.current
     const abort = err => {
       // after merging https://github.com/vuejs/vue-router/pull/2771 we
@@ -200,7 +202,8 @@ export class History {
     })
   }
 
-  updateRoute (route: Route) {
+  updateRoute (route: Route)
+  {
     const prev = this.current
     this.current = route
     this.cb && this.cb(route)
@@ -237,7 +240,8 @@ function resolveQueue (
   updated: Array<RouteRecord>,
   activated: Array<RouteRecord>,
   deactivated: Array<RouteRecord>
-} {
+}
+{
   let i
   const max = Math.max(current.length, next.length)
   for (i = 0; i < max; i++) {
@@ -257,7 +261,8 @@ function extractGuards (
   name: string,
   bind: Function,
   reverse?: boolean
-): Array<?Function> {
+): Array<?Function>
+{
   const guards = flatMapComponents(records, (def, instance, match, key) => {
     const guard = extractGuard(def, name)
     if (guard) {
@@ -272,7 +277,8 @@ function extractGuards (
 function extractGuard (
   def: Object | Function,
   key: string
-): NavigationGuard | Array<NavigationGuard> {
+): NavigationGuard | Array<NavigationGuard>
+{
   if (typeof def !== 'function') {
     // extend now so that global mixins are applied.
     def = _Vue.extend(def)
@@ -288,7 +294,8 @@ function extractUpdateHooks (updated: Array<RouteRecord>): Array<?Function> {
   return extractGuards(updated, 'beforeRouteUpdate', bindGuard)
 }
 
-function bindGuard (guard: NavigationGuard, instance: ?_Vue): ?NavigationGuard {
+function bindGuard (guard: NavigationGuard, instance: ?_Vue): ?NavigationGuard
+{
   if (instance) {
     return function boundRouteGuard () {
       return guard.apply(instance, arguments)
@@ -300,7 +307,8 @@ function extractEnterGuards (
   activated: Array<RouteRecord>,
   cbs: Array<Function>,
   isValid: () => boolean
-): Array<?Function> {
+): Array<?Function>
+{
   return extractGuards(
     activated,
     'beforeRouteEnter',
@@ -316,7 +324,8 @@ function bindEnterGuard (
   key: string,
   cbs: Array<Function>,
   isValid: () => boolean
-): NavigationGuard {
+): NavigationGuard
+{
   return function routeEnterGuard (to, from, next) {
     return guard(to, from, cb => {
       if (typeof cb === 'function') {
@@ -339,7 +348,8 @@ function poll (
   instances: Object,
   key: string,
   isValid: () => boolean
-) {
+)
+{
   if (
     instances[key] &&
     !instances[key]._isBeingDestroyed // do not reuse being destroyed instance
