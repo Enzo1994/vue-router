@@ -110,7 +110,7 @@ export default class VueRouter {
 
     const history = this.history
 
-    if (history instanceof HTML5History) {
+    if (history instanceof HTML5History) { // 访问页面后，会通过 transitionTo 跳转到当前的页面
       history.transitionTo(history.getCurrentLocation())
     } else if (history instanceof HashHistory) {
       const setupHashListener = () => {

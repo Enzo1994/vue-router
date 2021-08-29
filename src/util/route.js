@@ -8,8 +8,7 @@ const trailingSlashRE = /\/?$/
 
 
 /*
- * 创建路由函数
- *
+ * 创建路由record
  */
 export function createRoute (
   record: ?RouteRecord,  // 记录

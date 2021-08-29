@@ -62,30 +62,34 @@ function addRouteRecord (
 
   const pathToRegexpOptions: PathToRegexpOptions =
     route.pathToRegexpOptions || {}
-  const normalizedPath = normalizePath(path, parent, pathToRegexpOptions.strict)
+  /**
+   * 对于配置项的path兼容处理，主要是相对路径转化成绝对路径：
+   */
+   const normalizedPath = normalizePath(path, parent, pathToRegexpOptions.strict)
 
-  if (typeof route.caseSensitive === 'boolean') {
-    pathToRegexpOptions.sensitive = route.caseSensitive
-  }
-
-  const record: RouteRecord = {
-    path: normalizedPath,
-    regex: compileRouteRegex(normalizedPath, pathToRegexpOptions),
-    components: route.components || { default: route.component },
-    instances: {},
-    name,
-    parent,
-    matchAs,
-    redirect: route.redirect,
-    beforeEnter: route.beforeEnter,
-    meta: route.meta || {},
-    props:
-      route.props == null
-        ? {}
-        : route.components
-          ? route.props
-          : { default: route.props }
-  }
+   if (typeof route.caseSensitive === 'boolean') {
+     pathToRegexpOptions.sensitive = route.caseSensitive
+   }
+ 
+   const record: RouteRecord = {  // 为路径匹配提供依据
+     path: normalizedPath,  // 当前路由的绝对路径
+     regex: compileRouteRegex(normalizedPath, pathToRegexpOptions),  // 正则表达式
+     components: route.components || { default: route.component }, // 配置表的component
+     instances: {},
+     enteredCbs: {},
+     name,  // 路由 name
+     parent,
+     matchAs,
+     redirect: route.redirect,
+     beforeEnter: route.beforeEnter,
+     meta: route.meta || {},
+     props:
+       route.props == null
+         ? {}
+         : route.components
+           ? route.props
+           : { default: route.props } // 没传components的时候
+   }
 
   if (route.children) {
     // Warn if route is named, does not redirect and has a default child route.
@@ -117,7 +121,7 @@ function addRouteRecord (
     })
   }
 
-  if (!pathMap[record.path]) {
+  if (!pathMap[record.path]) {  // 如果映射表存在当前路径，就不再添加
     pathList.push(record.path)
     pathMap[record.path] = record
   }
@@ -186,8 +190,8 @@ function normalizePath (
   parent?: RouteRecord,
   strict?: boolean
 ): string {
-  if (!strict) path = path.replace(/\/$/, '')
-  if (path[0] === '/') return path
-  if (parent == null) return path
-  return cleanPath(`${parent.path}/${path}`)
+  if (!strict) path = path.replace(/\/$/, '')  // 结尾的斜杠按需去掉
+  if (path[0] === '/') return path  // 绝对路径，直接返回
+  if (parent == null) return path  // 根路径，直接返回（根路径可以开头没有斜杠）
+  return cleanPath(`${parent.path}/${path}`)  // 相对路径，和父路径拼接成绝对路径，双斜杠去掉重复的，返回
 }

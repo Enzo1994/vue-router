@@ -13,14 +13,14 @@ export type Matcher = {
   addRoutes: (routes: Array<RouteConfig>) => void;
 };
 
-export function createMatcher (
+export function createMatcher (  //
   routes: Array<RouteConfig>,
   router: VueRouter
 ): Matcher {
-  const { pathList, pathMap, nameMap } = createRouteMap(routes)
+  const { pathList, pathMap, nameMap } = createRouteMap(routes) // 根据传入的route config，创建一个映射表，第一次调用返回这三个映射
 
   function addRoutes (routes) {
-    createRouteMap(routes, pathList, pathMap, nameMap)
+    createRouteMap(routes, pathList, pathMap, nameMap) // 在第一次调用返回的三个映射表后面追加
   }
 
   function match (
@@ -28,7 +28,7 @@ export function createMatcher (
     currentRoute?: Route,
     redirectedFrom?: Location
   ): Route {
-    const location = normalizeLocation(raw, currentRoute, false, router)
+    const location = normalizeLocation(raw, currentRoute, false, router)  // 拿到name、query、
     const { name } = location
 
     if (name) {
@@ -36,7 +36,7 @@ export function createMatcher (
       if (process.env.NODE_ENV !== 'production') {
         warn(record, `Route with name '${name}' does not exist`)
       }
-      if (!record) return _createRoute(null, location)
+      if (!record) return _createRoute(null, location) // 如果映射表不存在对应路由record，就创建一个
       const paramNames = record.regex.keys
         .filter(key => !key.optional)
         .map(key => key.name)
@@ -150,7 +150,7 @@ export function createMatcher (
     return _createRoute(null, location)
   }
 
-  function _createRoute (
+  function _createRoute (  // 创建路由record
     record: ?RouteRecord,
     location: Location,
     redirectedFrom?: Location
